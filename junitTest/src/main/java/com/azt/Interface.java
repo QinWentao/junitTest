@@ -5,34 +5,54 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
 public class Interface {
-	static final String JSESSIONID = "970F96AB8F3A019CC08B14643B93B010";
+	static final String JSESSIONID = "41021E2611EA587C1CF42BC2E4D9FD9E";
 	static final String token = "964f10ce-f14d-4432-97b1-cb1612f11e72";
-	public void firstAudit(String orderID) {
+	/*
+	 * 一级稽核通过
+	 * */
+	public String firstAudit(String orderID) {
 		System.out.println("开始一级稽核");
+		String response = "";
 		//接口地址
 		String path = "http://192.168.0.186:6008/saferycom/auditsys_firstAudit.do";
 		//报文
         String parm = "id=0&doc_id=" + orderID + "&audit_state=1&reason=&revoked=0&achieve=1&bug_type=&auditHisIds=&hasProblem=0&audit_flag=0&iscodekey=false&ajaxFlag=true";
 		try {
 			Interface obj = new Interface();			
-			String response = new String(obj.postRequest(path, parm).getBytes("gbk"),"utf-8");
-			System.out.println("Respond result:" + response);
+			response = obj.characterTransfer(obj.postRequest(path, parm));
+			//System.out.println("Respond result:" + response);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			System.out.println("一级稽核失败");
 			e.printStackTrace();
-		}       
+		}      
+		return response;
+	}
+	/*
+	 * 字符串转码
+	 * */
+	public String characterTransfer(String str) {
+		String newstr = "";
+		try {
+			newstr = new String(str.getBytes("gbk"),"utf-8");			
+		} catch (UnsupportedEncodingException e) {
+			System.out.println("Fail to transfer character!");
+			e.printStackTrace();
+		}
+		return newstr;
 	}
 	
+	/*发送Post请求
+	 * */
 	public String postRequest(String path,String parm) {
 		PrintWriter dataout = null;
 		BufferedReader datain = null;
@@ -66,6 +86,7 @@ public class Interface {
 //	        }  
 	        //创建输出流
 	        dataout = new PrintWriter(connection.getOutputStream());
+	        //采用utf-8格式发送请求
 	        //dataout=new OutputStreamWriter(connection.getOutputStream(),"UTF-8");
 	        //发送请求参数
 	        dataout.print(parm);
@@ -91,6 +112,10 @@ public class Interface {
 		}
 		return response;
 	}
+	
+	/*
+	 * 参考使用
+	 * */
 	public static String sendPost(String url, String param) {  
         PrintWriter out = null;  
         BufferedReader in = null;  

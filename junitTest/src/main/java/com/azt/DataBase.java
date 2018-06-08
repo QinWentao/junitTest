@@ -67,7 +67,7 @@ public class DataBase {
 				  orderID  = rs.getString("ID");		         
 			}
 			db.closeConnect();
-			System.out.println("Get orderID successfully!  ----->  " + orderID);
+			System.out.println("Get orderID successfully!  -->  " + orderID);
 			}
 		 catch (SQLException e) {
 			System.out.println("Fail to get OrderID!");
